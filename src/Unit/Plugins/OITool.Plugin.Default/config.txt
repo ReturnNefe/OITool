@@ -1,0 +1,10 @@
+{
+    "text-color": {
+        "accepted": "#52c41a",
+        "wrong-answer": "#e74c3c",
+        "time-limit-exceed": "#052242",
+        "memory-limit-exceed": "#6c757d",
+        "runtime-error": "#9d3dcf"
+    },
+    "bytes-limit": 10240
+}
