@@ -4,6 +4,6 @@
     {
         public PluginInfo Info { get; }
         
-        public void Initialize(PluginContext context);
+        public void Initialize(IPluginContext context);
     }
 }

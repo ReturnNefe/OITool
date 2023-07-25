@@ -6,11 +6,15 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <AssemblyName>oitool</AssemblyName>
+    
+    <Version>0.1.0</Version>
   </PropertyGroup>
 
   <ItemGroup>
     <ProjectReference Include="../OITool.Base/OITool.Base.csproj" />
     <ProjectReference Include="../OITool.Interface/OITool.Interface.csproj" />
+    <Reference Include="../dependence/Nefe.Pipe.dll"/>
+    <Reference Include="../dependence/Nefe.ColorConsole.dll"/>
   </ItemGroup>
 
   <ItemGroup>

@@ -6,5 +6,5 @@
         "memory-limit-exceed": "#6c757d",
         "runtime-error": "#9d3dcf"
     },
-    "bytes-limit": 10240
+    "bytes-limit": 1024
 }

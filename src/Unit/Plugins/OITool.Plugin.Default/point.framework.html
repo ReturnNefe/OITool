@@ -6,10 +6,6 @@
             <td>${judge-time}</td>
         </tr>
         <tr>
-            <td><strong>Program</strong></td>
-            <td>${program}</td>
-        </tr>
-        <tr>
             <td><strong>Data</strong></td>
             <td>${data}</td>
         </tr>
@@ -21,11 +17,14 @@
 </table>
 <div class="row">
     <div class="col-sm-6">
-        <h6>Program Output</h6>
-        <p readonly class="form-control" style="height: 400px;">${program-output}</p>
+        <h6>Standard Input</h6>
+        <textarea readonly class="form-control" style="height: 25rem;">${standard-input}</textarea>
+        <h6>Standard Output</h6>
+        <textarea readonly class="form-control" style="height: 25rem;">${standard-output}</textarea>
     </div>
     <div class="col-sm-6">
-        <h6>Standard Output</h6>
-        <p readonly class="form-control" style="height: 400px;">${standard-output}</p>
+        <h6>Program Output</h6>
+        <textarea readonly class="form-control" style="height: 52.5rem;">${program-output}</textarea>
     </div>
 </div>
+<br/>

@@ -1,0 +1,24 @@
+{
+  "runtimeTarget": {
+    "name": ".NETStandard,Version=v2.1/",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETStandard,Version=v2.1": {},
+    ".NETStandard,Version=v2.1/": {
+      "Nefe.ColorConsole/0.1.0-beta": {
+        "runtime": {
+          "Nefe.ColorConsole.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "Nefe.ColorConsole/0.1.0-beta": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}

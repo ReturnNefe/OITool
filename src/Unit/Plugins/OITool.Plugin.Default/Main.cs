@@ -3,13 +3,15 @@ using OITool.Interface;
 
 namespace OITool.Plugin.Default
 {
-    public class Default : OITool.Interface.IPlugin
+    public class Main : OITool.Interface.IPlugin
     {
-        public PluginInfo Info => new() { Name = "Default", Description = "The default plugin for OITool.", Author = "ReturnNefe", Version = new(0, 1, 0) };
+        private PluginInfo info = new() { Name = "Default", Description = "The default plugin for OITool.", Author = "ReturnNefe", Version = new(0, 1, 0) };
+        public PluginInfo Info => this.info;
 
-        public void Initialize(PluginContext context)
+        public void Initialize(IPluginContext context)
         {
-            context.AddReporter("default.reporter", new Reporter());
+            context.Judge.AddJudger(new Judge.Judger("default.judge.judger"));
+            context.Judge.AddReporter(new Judge.Reporter("default.judge.reporter"));
         }
 
         public async Task OnLoading(string baseDirectory)

@@ -1,8 +1,8 @@
-namespace OITool.CLI
+namespace OITool.Server
 {
     internal class AppInfo
     {
         static internal List<Nefe.PluginCore.Plugin> Plugins = new();
-        static internal Dictionary<string, object> PluginDictionary = new();
+        static internal Worker.Workers Workers = new();
     }
 }
