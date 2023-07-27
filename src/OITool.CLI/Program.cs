@@ -83,6 +83,7 @@ namespace OITool.CLI
             app.AddCommand("judge", async ([Argument("program", Description = "The program to be judged.")] string programFile,
                                            [Argument("data", Description = "The data used to judge. It could be data-file or folder.")] string[] dataFiles,
                                            [Option("timeout", new char[] { 't' }, Description = "The time limit of the program to be judged.")] int? timeout,
+                                           [Option("memory", new char[] { 'm' }, Description = "The memory limit of the program to be judged.")] int? memoryLimit,
                                            [Option("report", new char[] { 'r' }, Description = "Indicates where the report file should be generated.")] string? reportFile,
                                            [Option(Description = "The mode used when judging. The default is \"common\".")] string? mode) =>
             {
@@ -122,6 +123,7 @@ namespace OITool.CLI
                                 // Set Timeout / ReportGenerated
                                 // Set in configure file.
                                 Timeout = timeout ?? 1000,
+                                MemoryLimit = memoryLimit ?? 256,
                                 ReportFile = reportFile ?? "report.html"
                             },
                             CurrentDirectory = Environment.CurrentDirectory

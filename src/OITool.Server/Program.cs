@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.IO;
+using System.Text;
 using System.IO.Pipes;
 using System.Text.Encodings.Web;
 using System.Text.Json;
@@ -48,15 +49,19 @@ namespace OITool.Server
                 foreach (var plugin in AppInfo.Plugins)
                     plugin.Unload();
             };
-            
+
             var serverVersion = Assembly.GetExecutingAssembly().GetName().Version?.ToString() ?? "unkown";
             new ColorString(" ", ("darkgreen", "OITool Server"), ("cyan", serverVersion)).Output(true);
             Console.WriteLine();
 
             await loadPlugin(Path.Combine(AppContext.BaseDirectory, "plugins"));
 
-            var listener = new Listener(serverVersion);
-            await listener.ListenAsync();
+            try
+            {
+                var listener = new Listener(serverVersion);
+                await listener.ListenAsync();
+            }
+            catch (IOException) { Console.WriteLine("Another server is running."); }
         }
     }
 }

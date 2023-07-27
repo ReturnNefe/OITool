@@ -37,24 +37,23 @@ namespace OITool.Plugin.Default.Judge
                 throw new ApplicationException($"Faild to start program ({program})");
 
             // Monitor Memory Usage
-            var memoryUsed = process.PrivateMemorySize64 / 1024d / 1024d;
-            _ = Task.Run(async () =>
-            {
-                try
+            var memoryMonitorInterval = AppInfo.Setting?.MemoryDetectInterval ?? -1;
+            var memoryUsed = 0d;
+            if (memoryMonitorInterval > 0)
+                _ = Task.Run(async () =>
                 {
-                    var interval = AppInfo.Setting?.MemoryDetectInterval ?? -1;
-                    while (true)
+                    try
                     {
-                        if (process.HasExited) break;
-                        process.Refresh();
-                        memoryUsed = Math.Max(memoryUsed, process.PrivateMemorySize64 / 1024d / 1024d);
-
-                        if (interval > 0) await Task.Delay(interval);
-                        else break;
+                        while (true)
+                        {
+                            if (process.HasExited) break;
+                            process.Refresh();
+                            memoryUsed = Math.Max(memoryUsed, process.PrivateMemorySize64 / 1024d / 1024d);
+                            await Task.Delay(memoryMonitorInterval);
+                        }
                     }
-                }
-                catch { }
-            });
+                    catch { }
+                });
 
             var startTime = DateTime.Now;
 
