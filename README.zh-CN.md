@@ -25,13 +25,18 @@ OITool 最初是受到一位群友的启发而提出的。他觉得他用的编�
 
 ## 演示
 
+![Terminal](https://github.com/ReturnNefe/OITool/blob/main/docs/screenshots/terminal.png)
 
+![Report](https://github.com/ReturnNefe/OITool/blob/main/docs/screenshots/report.png)
+
+![Report Detail](https://github.com/ReturnNefe/OITool/blob/main/docs/screenshots/report.detail.png)
 
 ## 安装
 
 1. 下载 [.NET 6 Runtime](https://dotnet.microsoft.com/download/dotnet/6.0)。
 2. 下载并解压 [OITool](https://github.com/ReturnNefe/OITool/releases)。
 3. _(可选的)_ 配置环境变量。
+   
    [教程(Windows)](https://www.computerhope.com/issues/ch000549.htm)
    
    添加 **oitool** 所在的文件夹到环境变量中。

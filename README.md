@@ -25,13 +25,18 @@ Then I had an idea. Could I made a independent tool for OIers? It doesn't depend
 
 ## Visuals
 
+![Terminal](https://github.com/ReturnNefe/OITool/blob/main/docs/screenshots/terminal.png)
 
+![Report](https://github.com/ReturnNefe/OITool/blob/main/docs/screenshots/report.png)
+
+![Report Detail](https://github.com/ReturnNefe/OITool/blob/main/docs/screenshots/report.detail.png)
 
 ## Install
 
 1. Download [.NET 6 Runtime](https://dotnet.microsoft.com/download/dotnet/6.0).
 2. Download and upzip OITool in [Releases](https://github.com/ReturnNefe/OITool/releases).
 3. _(Optional)_ Configure Environment Variables.
+   
    [Tutorial(Windows)](https://www.computerhope.com/issues/ch000549.htm)
    
    Add the directory where **oitool** is located to the environment variable.
