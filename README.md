@@ -3,6 +3,7 @@
 [![GitHub release (with filter)](https://img.shields.io/github/v/release/ReturnNefe/OITool?style=for-the-badge)
 ](https://github.com/ReturnNefe/OITool/releases) ![GitHub all releases](https://img.shields.io/github/downloads/ReturnNefe/OITool/total?style=for-the-badge)
 
+English | [中文](https://github.com/ReturnNefe/OITool/blob/main/README.zh-CN.md)
 
 **The useful and lite tool for OIers.**
  
@@ -12,9 +13,9 @@ OITool is currently only available on Terminal. It may have a version with a gra
 
 ## Background
 
-OITool started with a recommendation originally posted by a friend in a online-group, who is an OIer. He didn't feel very comfortable when using the judger on the editor he used. So he asked me if I could implement this on the IDE I had made. (In fact, That IDE already has this feature, but, it is no longer maintained)
+OITool started with a suggestion originally made by a friend in a online-group, who is an OIer. He didn't feel very comfortable when using the judger on the editor he used. So he asked me if I could implement this on the IDE I had made. (In fact, That IDE already has this feature, but, it is no longer maintained)
 
-Then I had an idea. Could I made a independent tool for OIers? It doesn't depend on any editor or IDE, and it allow users to load plugins freely so that it can do many things. This specification started as a result of that.
+Then I had an idea. Could I made a independent tool for OIers? It doesn't depend on any editor or IDE, and it allow users to load plugins freely so that it can do many things. This tool started as a result of that.
 
 ## Features
 
@@ -33,7 +34,7 @@ Then I had an idea. Could I made a independent tool for OIers? It doesn't depend
 3. _(Optional)_ Configure Environment Variables.
    [Tutorial(Windows)](https://www.computerhope.com/issues/ch000549.htm)
    
-   Add the directory where ``oitool`` is located to the environment variable.
+   Add the directory where **oitool** is located to the environment variable.
 
 ## Usage
 
@@ -44,10 +45,10 @@ You can type ``oitool [command] --help`` for help.
 | Command | Description | Example |
 |:--:|:--:|:--:|
 | judge * | Try to judge program by given data-file | ```oitool judge program.exe data.in data.out``` |
-| server start | Start OITool.Server if it isn't running in the background. | ``oitool server start`` |
+| server start | Start **OITool.Server** if it isn't running in the background. | ``oitool server start`` |
 | help | Get Help Information | ``oitool help`` |
 
-\* Needs OITool.Server running in the background, not sleeping.
+\* Needs **OITool.Server** running in the background, not sleeping💤.
 
 **Example**
 
@@ -76,7 +77,7 @@ Consequently, you may need to configure plugins.
 
 Here are the plugin installed by default:
 
-* [Plugin.Default]([docs](https://github.com/ReturnNefe/OITool/blob/main/docs/plugin/default.md))
+* [Plugin.Default](https://github.com/ReturnNefe/OITool/blob/main/docs/plugin/default.md)
 
 ## License
 
