@@ -6,13 +6,13 @@ namespace OITool.Plugin.Default.Judge
     {
         #region [Private Method]
 
-        private async Task<Interface.Judge.Result> judge(string program, string inputFile, string outputFile, int timeout)
+        private async Task<Interface.Judge.JudgerResult> judge(string program, string inputFile, string outputFile, int timeout, double memoryLimit)
         {
-            var status = Interface.Judge.Status.Accepted;
+            var status = Interface.Judge.JudgerStatus.Accepted;
 
-            void changeStatus(Interface.Judge.Status newStatus)
+            void changeStatus(Interface.Judge.JudgerStatus newStatus)
             {
-                if (status != Interface.Judge.Status.TimeLimitExceed)
+                if (status != Interface.Judge.JudgerStatus.TimeLimitExceed)
                     status = newStatus;
             }
 
@@ -36,6 +36,26 @@ namespace OITool.Plugin.Default.Judge
             if (process == null)
                 throw new ApplicationException($"Faild to start program ({program})");
 
+            // Monitor Memory Usage
+            var memoryUsed = process.PrivateMemorySize64 / 1024d / 1024d;
+            _ = Task.Run(async () =>
+            {
+                try
+                {
+                    var interval = AppInfo.Setting?.MemoryDetectInterval ?? -1;
+                    while (true)
+                    {
+                        if (process.HasExited) break;
+                        process.Refresh();
+                        memoryUsed = Math.Max(memoryUsed, process.PrivateMemorySize64 / 1024d / 1024d);
+
+                        if (interval > 0) await Task.Delay(interval);
+                        else break;
+                    }
+                }
+                catch { }
+            });
+
             var startTime = DateTime.Now;
 
             // Redirect Input
@@ -46,9 +66,18 @@ namespace OITool.Plugin.Default.Judge
             // Kill the process if the time limit is exceeded.
             if (!process.WaitForExit(timeout))
             {
-                changeStatus(Interface.Judge.Status.TimeLimitExceed);
+                changeStatus(Interface.Judge.JudgerStatus.TimeLimitExceed);
                 process.Kill();
             }
+
+            // Check the time
+            var endTime = DateTime.Now;
+            var totalTime = (endTime - startTime).TotalMilliseconds;
+            if (totalTime > (double)timeout)
+                changeStatus(Interface.Judge.JudgerStatus.TimeLimitExceed);
+
+            if (memoryUsed > memoryLimit)
+                changeStatus(Interface.Judge.JudgerStatus.MemoryLimitExceed);
 
             // Redirect Output
             var prgOut = "";
@@ -60,12 +89,12 @@ namespace OITool.Plugin.Default.Judge
                     prgOut += prgLine + Environment.NewLine;
 
                     if (outputFileStream.EndOfStream && !string.IsNullOrWhiteSpace(prgLine))
-                        changeStatus(Interface.Judge.Status.WrongAnswer);
+                        changeStatus(Interface.Judge.JudgerStatus.WrongAnswer);
                     else
                     {
                         var stdOut = await outputFileStream.ReadLineAsync() ?? "";
                         if (prgLine.TrimEnd() != stdOut.TrimEnd())
-                            changeStatus(Interface.Judge.Status.WrongAnswer);
+                            changeStatus(Interface.Judge.JudgerStatus.WrongAnswer);
                     }
                 }
 
@@ -73,21 +102,23 @@ namespace OITool.Plugin.Default.Judge
                 while (!outputFileStream.EndOfStream)
                 {
                     if (!string.IsNullOrWhiteSpace(await outputFileStream.ReadLineAsync()))
-                        changeStatus(Interface.Judge.Status.WrongAnswer);
+                        changeStatus(Interface.Judge.JudgerStatus.WrongAnswer);
                 }
             }
 
             if (process.ExitCode != 0)
-                changeStatus(Interface.Judge.Status.RuntimeError);
+                changeStatus(Interface.Judge.JudgerStatus.RuntimeError);
 
-            var result = new Interface.Judge.Result()
+            var result = new Interface.Judge.JudgerResult()
             {
                 Time = startTime,
                 InputFile = inputFile,
                 AnswerFile = outputFile,
                 ProgramOutput = prgOut,
-                TimeUsed = (process.ExitTime - startTime).TotalMilliseconds,
+                TimeUsed = totalTime,
                 Timeout = timeout,
+                MemoryUsed = memoryUsed,
+                MemoryLimit = memoryLimit,
                 Status = status,
             };
 
@@ -99,9 +130,9 @@ namespace OITool.Plugin.Default.Judge
         #endregion
 
         #region [Public Property]
-        
+
         public string Identifier { get; }
-        
+
         #endregion
 
         #region [Public Method]
@@ -111,18 +142,19 @@ namespace OITool.Plugin.Default.Judge
             this.Identifier = identifier;
         }
 
-        public async Task<Interface.Judge.Result[]> Judge(Interface.Judge.Argument argument, Interface.Judge.Option option, Interface.ActionHandler handler)
+        public async Task<Interface.Judge.JudgerResult[]> Judge(Interface.Judge.JudgerArgument argument, Interface.Judge.JudgerOption option, Interface.ActionHandler handler)
         {
             // Check Judge Mode
             if (argument.Mode != "common")
-                return Array.Empty<Interface.Judge.Result>();
-            
-            var results = new List<Interface.Judge.Result>();
+                return Array.Empty<Interface.Judge.JudgerResult>();
+
+            var programFile = handler.ConvertToWorkingDirectory(argument.ProgramFile);
+            var results = new List<Interface.Judge.JudgerResult>();
 
             foreach (var path in argument.DataFiles)
             {
                 var fullPath = handler.ConvertToWorkingDirectory(path);
-                
+
                 // Judge datas in directory
                 // path e.g. /test/
                 if (Directory.Exists(fullPath))
@@ -138,7 +170,7 @@ namespace OITool.Plugin.Default.Judge
                         // Scan OutputData
                         foreach (var outExtension in option.StdOnputFileExtensions)
                             if (File.Exists(stdOutputFile = Path.ChangeExtension(iter, outExtension)))
-                                results.Add(await judge(argument.ProgramFile, stdInputFile, stdOutputFile, argument.Timeout));
+                                results.Add(await judge(programFile, stdInputFile, stdOutputFile, argument.Timeout, argument.MemoryLimit));
                     }
                 }
 
@@ -153,7 +185,7 @@ namespace OITool.Plugin.Default.Judge
                     // Scan OutputData
                     foreach (var outExtension in option.StdOnputFileExtensions)
                         if (File.Exists(stdOutputFile = Path.ChangeExtension(fullPath, outExtension)))
-                            results.Add(await this.judge(argument.ProgramFile, stdInputFile, stdOutputFile, argument.Timeout));
+                            results.Add(await this.judge(programFile, stdInputFile, stdOutputFile, argument.Timeout, argument.MemoryLimit));
 
                     if (!File.Exists(stdOutputFile))
                         throw new FileNotFoundException($"StdOutputData not found: {fullPath}");
@@ -174,9 +206,8 @@ namespace OITool.Plugin.Default.Judge
 
                     if (File.Exists(stdInputFile) && File.Exists(stdOutputFile))
                     {
-                        results.Add(await this.judge(argument.ProgramFile, stdInputFile, stdOutputFile, argument.Timeout));
+                        results.Add(await this.judge(programFile, stdInputFile, stdOutputFile, argument.Timeout, argument.MemoryLimit));
                     }
-                    else throw new FileNotFoundException($"StdData not found: {fullPath}");
                 }
             }
 

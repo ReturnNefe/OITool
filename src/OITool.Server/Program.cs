@@ -4,12 +4,14 @@ using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.Unicode;
+using System.Reflection;
+using Nefe.ColorConsole;
 
 namespace OITool.Server
 {
     class Program
     {
-        static async Task LoadPlugin(string directory)
+        static async Task loadPlugin(string directory)
         {
             foreach (var dirPath in Directory.GetDirectories(directory))
             {
@@ -33,53 +35,28 @@ namespace OITool.Server
                     await iPlugin.OnLoading(dirPath);
                     iPlugin.Initialize(pluginContext);
 
-                    Console.WriteLine($"Load Plugin Successfully: {iPlugin.Info.Name}");
+                    // Notice plugin when plugin will be unloaded.
+                    plugin.Unloading += (e) => iPlugin.OnUnloading();
                 }
             }
         }
 
         static async Task Main(string[] args)
         {
-            var path = AppContext.BaseDirectory;
-            await LoadPlugin(Path.Combine(path, "plugins"));
-
-            var judger = new Base.Worker.Judger(
-                argument: new()
-                {
-                    Mode = "common",
-                    ProgramFile = Path.Combine(path, "test/test.exe"),
-                    
-                    // StdInputFilePath = Path.Combine(path, "test/test.in"),
-                    // StdOutputFilePath = Path.Combine(path, "test/test.out"),
-                    DataFiles = new string[] {
-                        "./group/"
-                    },
-                    
-                    Timeout = 1000,
-
-                    ReportFile = "report.html"
-                },
-                option: new()
-                {
-                    StdInputFileExtensions = new string[]
-                    {
-                        "in"
-                    },
-                    StdOnputFileExtensions = new string[]
-                    {
-                        "out"
-                        //,"ans"
-                    }
-                },
-                judgers: AppInfo.Workers.Judges.Judgers.ToArray(),
-                reporters: AppInfo.Workers.Judges.Reporters.ToArray()
-            );
-
-            var result = await judger.Judge();
-            Console.WriteLine($"Status: {result.Judge[0]}");
-            Console.WriteLine($"Time Used: {Math.Round(result.Judge[0].TimeUsed, 1)}ms");
+            Console.CancelKeyPress += (_, _) =>
+            {
+                foreach (var plugin in AppInfo.Plugins)
+                    plugin.Unload();
+            };
+            
+            var serverVersion = Assembly.GetExecutingAssembly().GetName().Version?.ToString() ?? "unkown";
+            new ColorString(" ", ("darkgreen", "OITool Server"), ("cyan", serverVersion)).Output(true);
             Console.WriteLine();
-            Console.WriteLine($"Report: {result.ReportFiles[0]}");
+
+            await loadPlugin(Path.Combine(AppContext.BaseDirectory, "plugins"));
+
+            var listener = new Listener(serverVersion);
+            await listener.ListenAsync();
         }
     }
 }

@@ -7,17 +7,19 @@
     <Nullable>enable</Nullable>
     <AssemblyName>oitool</AssemblyName>
     
-    <Version>0.1.0</Version>
+    <Version>0.1.0-beta</Version>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="../OITool.Base/OITool.Base.csproj" />
     <ProjectReference Include="../OITool.Interface/OITool.Interface.csproj" />
-    <Reference Include="../dependence/Nefe.Pipe.dll"/>
-    <Reference Include="../dependence/Nefe.ColorConsole.dll"/>
+    <ProjectReference Include="../OITool.Base/OITool.Base.csproj" />
+    <ProjectReference Include="../OITool.Comm/OITool.Comm.csproj" />
+    <Reference Include="../dependence/Nefe.Pipe.dll" />
+    <Reference Include="../dependence/Nefe.ColorConsole.dll" />
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Cocona.Lite" Version="2.2.0" />
     <PackageReference Include="Nefe.PluginCore" Version="0.1.1-beta" />
   </ItemGroup>
 </Project>

@@ -1,0 +1,51 @@
+<div class="card">
+    <div class="card-header" id="collHeading${point-index}">
+        <h2 class="mb-0">
+            <button class="btn btn-link btn-block text-left" type="button" data-toggle="collapse"
+                data-target="#collapse${point-index}" aria-expanded="true" aria-controls="collapse${point-index}">
+                <h4>Point #${point-index} <a style="color: ${result-color}">[${result-text}]</a></h4>
+            </button>
+        </h2>
+    </div>
+
+    <div id="collapse${point-index}" class="collapse" aria-labelledby="collHeading${point-index}" data-parent="#oneAccordion">
+        <div class="card-body">
+            <table class="table">
+                <tbody>
+                    <tr>
+                        <td><strong>Judge Time</strong></td>
+                        <td>${judge-time}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Data</strong></td>
+                        <td>${data}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Time Used</strong></td>
+                        <td>${time}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Memory Used</strong></td>
+                        <td>${memory}</td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="row">
+                <div class="col-sm-6">
+                    <h6>Standard Input</h6>
+                    <textarea readonly class="form-control"
+                        style="height: 25rem; resize:none;">${standard-input}</textarea>
+                    <h6>Standard Output</h6>
+                    <textarea readonly class="form-control"
+                        style="height: 25rem; resize:none;">${standard-output}</textarea>
+                </div>
+                <div class="col-sm-6">
+                    <h6>Program Output</h6>
+                    <textarea readonly class="form-control"
+                        style="height: 51.7rem; resize:none;">${program-output}</textarea>
+                </div>
+            </div>
+            <br />
+        </div>
+    </div>
+</div>

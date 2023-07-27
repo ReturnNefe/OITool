@@ -6,5 +6,8 @@
         "memory-limit-exceed": "#6c757d",
         "runtime-error": "#9d3dcf"
     },
-    "bytes-limit": 1024
+    "bytes-limit": 1024,
+    
+    // set to -1/null to disable memory detecting.
+    "memory-detect-interval": 20,
 }

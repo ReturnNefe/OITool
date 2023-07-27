@@ -27,5 +27,8 @@ namespace OITool.Plugin.Default
 
         [JsonPropertyName("bytes-limit")]
         public int? BytesLimit { get; set; } = null;
+
+        [JsonPropertyName("memory-detect-interval")]
+        public int? MemoryDetectInterval { get; set; } = null;
     }
 }

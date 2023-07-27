@@ -4,9 +4,12 @@
     <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <GenerateDocumentationFile>true</GenerateDocumentationFile>
     
     <Version>0.1.0-beta</Version>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="../OITool.Interface/OITool.Interface.csproj" />
+    <ProjectReference Include="../OITool.Base/OITool.Base.csproj" />
+  </ItemGroup>
 </Project>

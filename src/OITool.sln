@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OITool.Server", "OITool.Ser
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OITool.Interface", "OITool.Interface\OITool.Interface.csproj", "{DA5E7FC2-0BE3-4B19-920E-794CA7588CFC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OITool.Comm", "OITool.Comm\OITool.Comm.csproj", "{02DFCDF3-E9AD-41D7-8EC5-9CD20B22CF2E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -36,5 +38,9 @@ Global
 		{DA5E7FC2-0BE3-4B19-920E-794CA7588CFC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DA5E7FC2-0BE3-4B19-920E-794CA7588CFC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DA5E7FC2-0BE3-4B19-920E-794CA7588CFC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{02DFCDF3-E9AD-41D7-8EC5-9CD20B22CF2E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{02DFCDF3-E9AD-41D7-8EC5-9CD20B22CF2E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{02DFCDF3-E9AD-41D7-8EC5-9CD20B22CF2E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{02DFCDF3-E9AD-41D7-8EC5-9CD20B22CF2E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
