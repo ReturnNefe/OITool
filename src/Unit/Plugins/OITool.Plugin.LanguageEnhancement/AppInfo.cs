@@ -3,16 +3,15 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.Unicode;
 
-namespace OITool.Server
+namespace OITool.Plugin.LanguageEnhancement
 {
-    internal class AppInfo
+    static internal class AppInfo
     {
-        static public Setting? Setting;
+        static internal string BaseDirectory = "";
         
-        static public List<Nefe.PluginCore.Plugin> Plugins = new();
-        static public Plugin.Worker Workers = null!;
-        static public Plugin.Console Console = new(client: new());
+        static internal Interface.Console.IConsole Console = null!;
         
+        static internal Setting? Setting;
         static internal JsonSerializerOptions JsonOptions = new JsonSerializerOptions
         {
             WriteIndented = true,

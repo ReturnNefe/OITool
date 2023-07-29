@@ -3,9 +3,9 @@ namespace OITool.Base.Context
 {
     public class PluginContext : IPluginContext
     {
-        public Interface.Judge.IContext Judge { get; }
+        public Interface.Worker.Judge.IContext Judge { get; }
         
-        public PluginContext(Interface.Judge.IContext judge)
+        public PluginContext(Interface.Worker.Judge.IContext judge)
         {
             this.Judge = judge;
         }

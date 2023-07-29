@@ -1,4 +1,4 @@
-namespace OITool.Interface.Judge
+namespace OITool.Interface.Worker.Judge
 {
     /// <summary>
     /// The status of <see cref="IJudger.Judge" />.

@@ -1,0 +1,25 @@
+{
+    // whitelist
+    // set the item to null to enable all.
+    "whitelist": {
+        "judge": {
+            "judgers": [
+                "languageEnhancement.eventer.judger"
+            ],
+            "reporters": []
+        }
+    },
+    "option": {
+        "mode": "common",
+        "timeout": 1000,
+        "memory-limit": 512,
+        // set to null to disable generating report-file.
+        "report-file": "report.html",
+        
+        // without dot(.)
+        "extension": {
+            "input-data": [ "in" ],
+            "output-data": [ "out", "ans" ]
+        }
+    }
+}

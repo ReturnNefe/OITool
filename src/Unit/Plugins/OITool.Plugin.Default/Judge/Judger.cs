@@ -1,18 +1,19 @@
+using System.ComponentModel;
 using System.Diagnostics;
 
 namespace OITool.Plugin.Default.Judge
 {
-    public class Judger : Interface.Judge.IJudger
+    public class Judger : Interface.Worker.Judge.IJudger
     {
         #region [Private Method]
 
-        private async Task<Interface.Judge.JudgerResult> judge(string program, string inputFile, string outputFile, int timeout, double memoryLimit)
+        private async Task<Interface.Worker.Judge.JudgerResult> judge(string program, string inputFile, string outputFile, int timeout, double memoryLimit)
         {
-            var status = Interface.Judge.JudgerStatus.Accepted;
+            var status = Interface.Worker.Judge.JudgerStatus.Accepted;
 
-            void changeStatus(Interface.Judge.JudgerStatus newStatus)
+            void changeStatus(Interface.Worker.Judge.JudgerStatus newStatus)
             {
-                if (status != Interface.Judge.JudgerStatus.TimeLimitExceed)
+                if (status != Interface.Worker.Judge.JudgerStatus.TimeLimitExceed)
                     status = newStatus;
             }
 
@@ -65,7 +66,7 @@ namespace OITool.Plugin.Default.Judge
             // Kill the process if the time limit is exceeded.
             if (!process.WaitForExit(timeout))
             {
-                changeStatus(Interface.Judge.JudgerStatus.TimeLimitExceed);
+                changeStatus(Interface.Worker.Judge.JudgerStatus.TimeLimitExceed);
                 process.Kill();
             }
 
@@ -73,10 +74,10 @@ namespace OITool.Plugin.Default.Judge
             var endTime = DateTime.Now;
             var totalTime = (endTime - startTime).TotalMilliseconds;
             if (totalTime > (double)timeout)
-                changeStatus(Interface.Judge.JudgerStatus.TimeLimitExceed);
+                changeStatus(Interface.Worker.Judge.JudgerStatus.TimeLimitExceed);
 
             if (memoryUsed > memoryLimit)
-                changeStatus(Interface.Judge.JudgerStatus.MemoryLimitExceed);
+                changeStatus(Interface.Worker.Judge.JudgerStatus.MemoryLimitExceed);
 
             // Redirect Output
             var prgOut = "";
@@ -88,12 +89,12 @@ namespace OITool.Plugin.Default.Judge
                     prgOut += prgLine + Environment.NewLine;
 
                     if (outputFileStream.EndOfStream && !string.IsNullOrWhiteSpace(prgLine))
-                        changeStatus(Interface.Judge.JudgerStatus.WrongAnswer);
+                        changeStatus(Interface.Worker.Judge.JudgerStatus.WrongAnswer);
                     else
                     {
                         var stdOut = await outputFileStream.ReadLineAsync() ?? "";
                         if (prgLine.TrimEnd() != stdOut.TrimEnd())
-                            changeStatus(Interface.Judge.JudgerStatus.WrongAnswer);
+                            changeStatus(Interface.Worker.Judge.JudgerStatus.WrongAnswer);
                     }
                 }
 
@@ -101,14 +102,14 @@ namespace OITool.Plugin.Default.Judge
                 while (!outputFileStream.EndOfStream)
                 {
                     if (!string.IsNullOrWhiteSpace(await outputFileStream.ReadLineAsync()))
-                        changeStatus(Interface.Judge.JudgerStatus.WrongAnswer);
+                        changeStatus(Interface.Worker.Judge.JudgerStatus.WrongAnswer);
                 }
             }
 
             if (process.ExitCode != 0)
-                changeStatus(Interface.Judge.JudgerStatus.RuntimeError);
+                changeStatus(Interface.Worker.Judge.JudgerStatus.RuntimeError);
 
-            var result = new Interface.Judge.JudgerResult()
+            var result = new Interface.Worker.Judge.JudgerResult()
             {
                 Time = startTime,
                 InputFile = inputFile,
@@ -141,78 +142,85 @@ namespace OITool.Plugin.Default.Judge
             this.Identifier = identifier;
         }
 
-        public async Task<Interface.Judge.JudgerResult[]> Judge(Interface.Judge.JudgerArgument argument, Interface.Judge.JudgerOption option, Interface.ActionHandler handler)
+        public async Task<Interface.Worker.Judge.JudgerResult[]> Judge(Interface.Worker.Judge.JudgerArgument argument, Interface.Worker.Judge.JudgerOption option, Interface.ActionHandler handler)
         {
-            // Check Judge Mode
-            if (argument.Mode != "common")
-                return Array.Empty<Interface.Judge.JudgerResult>();
-
-            var programFile = handler.ConvertToWorkingDirectory(argument.ProgramFile);
-            var results = new List<Interface.Judge.JudgerResult>();
-
-            foreach (var path in argument.DataFiles)
+            try
             {
-                var fullPath = handler.ConvertToWorkingDirectory(path);
+                // Check Judge Mode
+                if (argument.Mode != "common")
+                    return Array.Empty<Interface.Worker.Judge.JudgerResult>();
 
-                // Judge datas in directory
-                // path e.g. /test/
-                if (Directory.Exists(fullPath))
+                var programFile = handler.ConvertToWorkingDirectory(argument.ProgramFile);
+                var results = new List<Interface.Worker.Judge.JudgerResult>();
+
+                foreach (var path in argument.DataFiles)
                 {
-                    // Get Data
-                    var files = Directory.GetFiles(fullPath).Where(file => option.StdInputFileExtensions.Contains(Path.GetExtension(file)[1..]));
+                    var fullPath = handler.ConvertToWorkingDirectory(path);
 
-                    foreach (var iter in files)
+                    // Judge datas in directory
+                    // path e.g. /test/
+                    if (Directory.Exists(fullPath))
                     {
-                        var stdInputFile = iter;
+                        // Get Data
+                        var files = Directory.GetFiles(fullPath).Where(file => option.StdInputFileExtensions.Contains(Path.GetExtension(file).Replace(".", "")));
+
+                        foreach (var iter in files)
+                        {
+                            var stdInputFile = iter;
+                            var stdOutputFile = "";
+
+                            // Scan OutputData
+                            foreach (var outExtension in option.StdOnputFileExtensions)
+                                if (File.Exists(stdOutputFile = Path.ChangeExtension(iter, outExtension)))
+                                    results.Add(await judge(programFile, stdInputFile, stdOutputFile, argument.Timeout, argument.MemoryLimit));
+                        }
+                    }
+
+                    // Judge single file
+                    // Identify InputData file
+                    // path e.g. /test/point1.in
+                    else if (File.Exists(fullPath) && option.StdInputFileExtensions.Contains(Path.GetExtension(fullPath).Replace(".", "")))
+                    {
+                        var stdInputFile = fullPath;
                         var stdOutputFile = "";
 
                         // Scan OutputData
                         foreach (var outExtension in option.StdOnputFileExtensions)
-                            if (File.Exists(stdOutputFile = Path.ChangeExtension(iter, outExtension)))
-                                results.Add(await judge(programFile, stdInputFile, stdOutputFile, argument.Timeout, argument.MemoryLimit));
+                            if (File.Exists(stdOutputFile = Path.ChangeExtension(fullPath, outExtension)))
+                            {
+                                results.Add(await this.judge(programFile, stdInputFile, stdOutputFile, argument.Timeout, argument.MemoryLimit));
+                                break;
+                            }
+
+                        if (!File.Exists(stdOutputFile))
+                            throw new FileNotFoundException($"StdOutputData not found: {fullPath}");
                     }
-                }
 
-                // Judge single file
-                // Identify InputData file
-                // path e.g. /test/point1.in
-                else if (File.Exists(fullPath) && option.StdInputFileExtensions.Contains(Path.GetExtension(fullPath)[1..]))
-                {
-                    var stdInputFile = fullPath;
-                    var stdOutputFile = "";
-
-                    // Scan OutputData
-                    foreach (var outExtension in option.StdOnputFileExtensions)
-                        if (File.Exists(stdOutputFile = Path.ChangeExtension(fullPath, outExtension)))
-                            results.Add(await this.judge(programFile, stdInputFile, stdOutputFile, argument.Timeout, argument.MemoryLimit));
-
-                    if (!File.Exists(stdOutputFile))
-                        throw new FileNotFoundException($"StdOutputData not found: {fullPath}");
-                }
-
-                // Judge single file without extension
-                // path e.g. /test/point1
-                else
-                {
-                    var stdInputFile = "";
-                    var stdOutputFile = "";
-
-                    foreach (var inExtension in option.StdInputFileExtensions)
-                        if (File.Exists(stdInputFile = fullPath + "." + inExtension))
-                            foreach (var outExtension in option.StdOnputFileExtensions)
-                                if (File.Exists(stdOutputFile = fullPath + "." + outExtension))
-                                    break;
-
-                    if (File.Exists(stdInputFile) && File.Exists(stdOutputFile))
+                    // Judge single file without extension
+                    // path e.g. /test/point1
+                    else
                     {
-                        results.Add(await this.judge(programFile, stdInputFile, stdOutputFile, argument.Timeout, argument.MemoryLimit));
+                        var stdInputFile = "";
+                        var stdOutputFile = "";
+
+                        foreach (var inExtension in option.StdInputFileExtensions)
+                            if (File.Exists(stdInputFile = fullPath + "." + inExtension))
+                                foreach (var outExtension in option.StdOnputFileExtensions)
+                                    if (File.Exists(stdOutputFile = fullPath + "." + outExtension))
+                                        break;
+
+                        if (File.Exists(stdInputFile) && File.Exists(stdOutputFile))
+                        {
+                            results.Add(await this.judge(programFile, stdInputFile, stdOutputFile, argument.Timeout, argument.MemoryLimit));
+                        }
                     }
                 }
+
+                return results.ToArray();
             }
-
-            return results.ToArray();
+            catch (Win32Exception) { return Array.Empty<Interface.Worker.Judge.JudgerResult>(); }
         }
-
-        #endregion
     }
+
+    #endregion
 }

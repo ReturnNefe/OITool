@@ -51,7 +51,10 @@ namespace OITool.CLI
                         Arguments = "",
                         FileName = serverPath,
                         WorkingDirectory = Path.GetDirectoryName(serverPath),
-                        CreateNoWindow = hidden
+                        CreateNoWindow = hidden,
+                        RedirectStandardOutput = hidden,
+                        RedirectStandardError = hidden,
+                        UseShellExecute = false
                     }
                 );
                 

@@ -1,6 +1,8 @@
-namespace OITool.Interface
+namespace OITool.Interface.Worker
 {
-    /// <summary />
+    /// <summary>
+    /// Responsible for implementing specific features.
+    /// </summary>
     public interface IWorker
     {
         /// <summary>

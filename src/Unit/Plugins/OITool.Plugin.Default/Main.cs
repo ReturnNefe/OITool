@@ -5,10 +5,10 @@ namespace OITool.Plugin.Default
 {
     public class Main : OITool.Interface.IPlugin
     {
-        private PluginInfo info = new() { Name = "Default", Description = "The default plugin for OITool.", Author = "ReturnNefe", Version = new(0, 1, 0) };
+        private PluginInfo info = new() { Name = "Default", Description = "The default plugin for OITool.", Author = "ReturnNefe", Version = new(0, 1, 1) };
         public PluginInfo Info => this.info;
 
-        public void Initialize(IPluginContext context)
+        public void Initialize(IPluginContext context, Interface.Console.IConsole console)
         {
             context.Judge.AddJudger(new Judge.Judger("default.judge.judger"));
             context.Judge.AddReporter(new Judge.Reporter("default.judge.reporter"));

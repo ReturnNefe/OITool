@@ -5,11 +5,12 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     
-    <Version>0.1.0-beta</Version>
+    <Version>0.1.1-beta</Version>
   </PropertyGroup>
 
   <ItemGroup>
     <ProjectReference Include="../OITool.Interface/OITool.Interface.csproj" />
     <ProjectReference Include="../OITool.Base/OITool.Base.csproj" />
+    <Reference Include="../dependence/Nefe.ColorConsole.dll" />
   </ItemGroup>
 </Project>

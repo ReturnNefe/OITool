@@ -1,27 +1,27 @@
 using System.IO;
 namespace OITool.Plugin.Default.Judge
 {
-    public class Reporter : Interface.Judge.IReporter
+    public class Reporter : Interface.Worker.Judge.IReporter
     {
         #region [Private Method]
 
-        private string getColor(Interface.Judge.JudgerStatus status)
+        private string getColor(Interface.Worker.Judge.JudgerStatus status)
         {
             switch (status)
             {
-                case Interface.Judge.JudgerStatus.Accepted:
+                case Interface.Worker.Judge.JudgerStatus.Accepted:
                     return AppInfo.Setting?.TextColor?.Accepted ?? "";
 
-                case Interface.Judge.JudgerStatus.WrongAnswer:
+                case Interface.Worker.Judge.JudgerStatus.WrongAnswer:
                     return AppInfo.Setting?.TextColor?.WrongAnswer ?? "";
 
-                case Interface.Judge.JudgerStatus.TimeLimitExceed:
+                case Interface.Worker.Judge.JudgerStatus.TimeLimitExceed:
                     return AppInfo.Setting?.TextColor?.TimeLimitExceed ?? "";
 
-                case Interface.Judge.JudgerStatus.MemoryLimitExceed:
+                case Interface.Worker.Judge.JudgerStatus.MemoryLimitExceed:
                     return AppInfo.Setting?.TextColor?.MemoryLimitExceed ?? "";
 
-                case Interface.Judge.JudgerStatus.RuntimeError:
+                case Interface.Worker.Judge.JudgerStatus.RuntimeError:
                     return AppInfo.Setting?.TextColor?.RuntimeError ?? "";
 
                 default:
@@ -29,23 +29,23 @@ namespace OITool.Plugin.Default.Judge
             }
         }
 
-        private string getStatusText(Interface.Judge.JudgerStatus status)
+        private string getStatusText(Interface.Worker.Judge.JudgerStatus status)
         {
             switch (status)
             {
-                case Interface.Judge.JudgerStatus.Accepted:
+                case Interface.Worker.Judge.JudgerStatus.Accepted:
                     return "AC";
 
-                case Interface.Judge.JudgerStatus.WrongAnswer:
+                case Interface.Worker.Judge.JudgerStatus.WrongAnswer:
                     return "WA";
 
-                case Interface.Judge.JudgerStatus.TimeLimitExceed:
+                case Interface.Worker.Judge.JudgerStatus.TimeLimitExceed:
                     return "TLE";
 
-                case Interface.Judge.JudgerStatus.MemoryLimitExceed:
+                case Interface.Worker.Judge.JudgerStatus.MemoryLimitExceed:
                     return "MLE";
 
-                case Interface.Judge.JudgerStatus.RuntimeError:
+                case Interface.Worker.Judge.JudgerStatus.RuntimeError:
                     return "RE";
 
                 default:
@@ -68,7 +68,7 @@ namespace OITool.Plugin.Default.Judge
             this.Identifier = identifier;
         }
 
-        public async Task<string?> Make(string reportFile, Interface.Judge.JudgerResult[] results, Interface.ActionHandler handler)
+        public async Task<string?> Make(string reportFile, Interface.Worker.Judge.JudgerResult[] results, Interface.ActionHandler handler)
         {
             try
             {
@@ -109,7 +109,7 @@ namespace OITool.Plugin.Default.Judge
                     var index = 1;
                     foreach (var result in results)
                     {
-                        if (result.Status == Interface.Judge.JudgerStatus.Accepted)
+                        if (result.Status == Interface.Worker.Judge.JudgerStatus.Accepted)
                             ++passCount;
                         
                         var pointHtml = pointTemplate.Replace("${point-index}", $"{index}")

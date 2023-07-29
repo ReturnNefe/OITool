@@ -1,8 +1,15 @@
-namespace OITool.Interface.Judge
+namespace OITool.Interface.Worker.Judge
 {
-    /// <summary />
+    /// <summary>
+    /// The context for <see cref="Interface.Worker.Judge" />.
+    /// </summary>
     public interface IContext
     {
+        /// <summary>
+        /// The context which you can register eventers.
+        /// </summary>
+        public Eventer.IContext Eventer { get; }
+        
         /// <summary>
         /// Register a <see cref="IJudger" />.
         /// </summary>

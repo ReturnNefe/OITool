@@ -13,7 +13,8 @@
         /// <summary>
         /// Occurs when the plugin is being initializing.
         /// </summary>
-        /// <param name="context">The context for the plugin which you can register <see cref="IWorker"/></param>
-        public void Initialize(IPluginContext context);
+        /// <param name="context">The context for the plugin which you can register <see cref="Worker.IWorker"/></param>
+        /// <param name="console">The interface of console.</param>
+        public void Initialize(IPluginContext context, Interface.Console.IConsole console);
     }
 }

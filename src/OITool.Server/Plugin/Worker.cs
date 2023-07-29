@@ -1,9 +1,7 @@
 namespace OITool.Server.Plugin
 {
-    internal struct Worker
+    internal class Worker
     {
-        internal JudgeWorker Judges = new();
-        
-        public Worker() { }
+        internal Judge.Worker Judge { get; init; } = null!;
     }
 }

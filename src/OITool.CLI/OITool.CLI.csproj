@@ -7,7 +7,7 @@
     <Nullable>enable</Nullable>
     <AssemblyName>oitool</AssemblyName>
     
-    <Version>0.1.0-beta</Version>
+    <Version>0.1.1-beta</Version>
   </PropertyGroup>
 
   <ItemGroup>

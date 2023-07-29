@@ -1,4 +1,4 @@
-namespace OITool.Interface.Judge
+namespace OITool.Interface.Worker.Judge
 {
     /// <summary>
     /// The option of <see cref="IJudger" />.
@@ -8,12 +8,12 @@ namespace OITool.Interface.Judge
         /// <summary>
         /// The collection of input data-file extensions that IJudger needs to indentify.
         /// </summary>
-        public string[] StdInputFileExtensions { get; init; } = Array.Empty<string>();
+        public string[] StdInputFileExtensions { get; set; } = Array.Empty<string>();
         
         /// <summary>
         /// The collection of answer data-file extensions that IJudger needs to indentify.
         /// </summary>
-        public string[] StdOnputFileExtensions { get; init; } = Array.Empty<string>();
+        public string[] StdOnputFileExtensions { get; set; } = Array.Empty<string>();
         
         /// <summary />
         public JudgerOption() { }

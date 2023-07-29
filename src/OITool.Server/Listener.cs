@@ -1,3 +1,4 @@
+using System;
 using System.Reflection;
 using System.Text;
 using System.Text.Json;
@@ -65,36 +66,51 @@ namespace OITool.Server
                                     {
                                         var data = JsonSerializer.Deserialize<Comm.Data.Judge.ArgumentData>(encoder.GetString(await server.ReceiveBytesAsync(cancellationToken)));
 
-                                        if (data == null || !data.Argument.HasValue || data.CurrentDirectory == null)
+                                        if (data == null || data.CurrentDirectory == null)
                                             throw new ArgumentException($"Failed to parse data");
 
                                         // TODO:
                                         // Write ExtraInfo into file
 
-                                        var judger = new Base.Worker.Judger(
-                                            argument: data.Argument.Value,
+                                        // Parse json-based data
+                                        var judge = new Base.Worker.Judge(
+                                            argument: new()
+                                            {
+                                                Mode = data.Mode ?? AppInfo.Setting?.Option?.Mode ?? "common",
+                                                ProgramFile = data.ProgramFile,
+                                                DataFiles = data.DataFiles,
+                                                Timeout = data.Timeout ?? AppInfo.Setting?.Option?.Timeout ?? 1000,
+                                                MemoryLimit = data.MemoryLimit ?? AppInfo.Setting?.Option?.MemoryLimit ?? 512,
+                                                ReportFile = data.ReportFile ?? AppInfo.Setting?.Option?.ReportFile
+                                            },
                                             option: new()
                                             {
-                                                StdInputFileExtensions = new string[]
-                                                {
-                                                    "in"
-                                                },
-                                                StdOnputFileExtensions = new string[]
-                                                {
-                                                    "ans",
-                                                    "out"
-                                                }
+                                                StdInputFileExtensions = AppInfo.Setting?.Option?.Extension?.InputData ?? new string[] { "in" },
+                                                StdOnputFileExtensions = AppInfo.Setting?.Option?.Extension?.OutputData ?? new string[] { "ans", "out" }
                                             },
-                                            judgers: AppInfo.Workers.Judges.Judgers.ToArray(),
-                                            reporters: AppInfo.Workers.Judges.Reporters.ToArray()
+                                            workerArgument: new()
+                                            {
+                                                Judgers = AppInfo.Workers.Judge.Judgers.ToArray(),
+                                                Reporters = AppInfo.Workers.Judge.Reporters.ToArray(),
+                                                JudgerEventers = AppInfo.Workers.Judge.Eventer.GetActiveJudgerEventers().ToArray(),
+                                                ReporterEventers = AppInfo.Workers.Judge.Eventer.GetActiveReporterEventers().ToArray()
+                                            }
                                         );
 
-                                        await server.SendBytesAsync(encoder.GetBytes(
-                                            JsonSerializer.Serialize<Comm.Data.Judge.ResultData>(new()
-                                            {
-                                                Result = await judger.Judge(data.CurrentDirectory)
-                                            })
-                                        ), cancellationToken);
+                                        try
+                                        {
+                                            await server.SendBytesAsync(encoder.GetBytes(
+                                                JsonSerializer.Serialize<Comm.Data.Judge.ResultData>(new()
+                                                {
+                                                    Result = await judge.ExecuteJudger(data.CurrentDirectory),
+                                                    ConsoleInformation = AppInfo.Console.GetClientConsole().GetBuffer().ToArray()
+                                                })
+                                            ), cancellationToken);
+                                        }
+                                        finally
+                                        {
+                                            AppInfo.Console.GetClientConsole().ClearBuffer();
+                                        }
 
                                         break;
                                     }

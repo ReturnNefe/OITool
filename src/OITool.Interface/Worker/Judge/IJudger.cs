@@ -1,4 +1,4 @@
-namespace OITool.Interface.Judge
+namespace OITool.Interface.Worker.Judge
 {
     /// <summary>
     /// The interface of judgers.
@@ -10,7 +10,7 @@ namespace OITool.Interface.Judge
         /// </summary>
         /// <param name="argument">The arguments used.</param>
         /// <param name="option">The options used.</param>
-        /// <param name="handler">An action handler.</param>
+        /// <param name="handler">An action handler generated for this public-method.</param>
         /// <returns>The result of judging.</returns>
         public Task<JudgerResult[]> Judge(JudgerArgument argument, JudgerOption option, ActionHandler handler);
     }

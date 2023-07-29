@@ -5,6 +5,6 @@ namespace OITool.Comm.Data.Judge
     public class ResultData : IData
     {
         [JsonPropertyName("res")]
-        public Base.Worker.Judger.Result? Result { get; init; }
+        public Base.Worker.Judge.Result? Result { get; init; }
     }
 }

@@ -5,6 +5,8 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OITool.Plugin.Default", "OITool.Plugin.Default\OITool.Plugin.Default.csproj", "{FD291747-7D9C-4D5D-B1B5-96D680951BBB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OITool.Plugin.LanguageEnhancement", "OITool.Plugin.LanguageEnhancement\OITool.Plugin.LanguageEnhancement.csproj", "{CB76A581-03D4-4F58-B56C-7A8C914E22BF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +20,9 @@ Global
 		{FD291747-7D9C-4D5D-B1B5-96D680951BBB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FD291747-7D9C-4D5D-B1B5-96D680951BBB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FD291747-7D9C-4D5D-B1B5-96D680951BBB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CB76A581-03D4-4F58-B56C-7A8C914E22BF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CB76A581-03D4-4F58-B56C-7A8C914E22BF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CB76A581-03D4-4F58-B56C-7A8C914E22BF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CB76A581-03D4-4F58-B56C-7A8C914E22BF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

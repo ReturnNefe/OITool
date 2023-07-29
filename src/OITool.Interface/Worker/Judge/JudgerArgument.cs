@@ -1,4 +1,4 @@
-namespace OITool.Interface.Judge
+namespace OITool.Interface.Worker.Judge
 {
     /// <summary>
     /// The Argument of <see cref="IJudger" />.
@@ -17,7 +17,7 @@ namespace OITool.Interface.Judge
         /// The mode used when judging.
         /// </summary>
         /// <returns>The lower mode string.</returns>
-        public string Mode { get => mode; init => mode = value.ToLower(); }
+        public string Mode { get => mode; set => mode = value.ToLower(); }
 
         /// <summary>
         /// The program to be judged provided by users.
@@ -26,29 +26,29 @@ namespace OITool.Interface.Judge
         /// The original path which was not converted.
         /// You may need to convert it to absolute path by using <see cref="OITool.Interface.ActionHandler.ConvertToWorkingDirectory(string)"/>.
         /// </value>
-        public string ProgramFile { get; init; } = "";
+        public string ProgramFile { get; set; } = "";
 
         /// <summary>
         /// The data used to judge provided by users.
         /// </summary>
         /// <returns>The array of original string.</returns>
-        public string[] DataFiles { get; init; } = Array.Empty<string>();
+        public string[] DataFiles { get; set; } = Array.Empty<string>();
 
         /// <summary>
         /// The time limit of the program to be judged.
         /// </summary>
-        public int Timeout { get; init; } = 1000;
+        public int Timeout { get; set; } = 1000;
 
         /// <summary>
         /// The memory limit (MB) of the program to be judged.
         /// </summary>
-        public double MemoryLimit { get; init; } = 256;
+        public double MemoryLimit { get; set; } = 256;
 
         /// <summary>
         /// The report file or name.
         /// </summary>
         /// <value>The original string.</value>
-        public string? ReportFile { get; init; } = null;
+        public string? ReportFile { get; set; } = null;
 
         #endregion
 

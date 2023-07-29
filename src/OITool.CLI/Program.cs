@@ -6,7 +6,7 @@ using Nefe.ColorConsole;
 using Cocona;
 using System.Text;
 
-using JudgerStatus = OITool.Interface.Judge.JudgerStatus;
+using JudgerStatus = OITool.Interface.Worker.Judge.JudgerStatus;
 
 namespace OITool.CLI
 {
@@ -75,7 +75,7 @@ namespace OITool.CLI
                     }
                     catch (Exception ex)
                     {
-                        new ColorString(("red", $"Error: "), ("gray", ex.ToString())).Output(true);
+                        new ColorString(("red", $"Error: "), ("", ex.ToString())).Output(true);
                     }
                 })
                 .WithDescription("Try to start a server if OITool.Server is not running.");
@@ -114,18 +114,12 @@ namespace OITool.CLI
 
                         var data = new Comm.Data.Judge.ArgumentData()
                         {
-                            Argument = new()
-                            {
-                                Mode = mode ?? "common",
-                                ProgramFile = programFile,
-                                DataFiles = dataFiles,
-                                // TODO:
-                                // Set Timeout / ReportGenerated
-                                // Set in configure file.
-                                Timeout = timeout ?? 1000,
-                                MemoryLimit = memoryLimit ?? 256,
-                                ReportFile = reportFile ?? "report.html"
-                            },
+                            Mode = mode,
+                            ProgramFile = programFile,
+                            DataFiles = dataFiles,
+                            Timeout = timeout,
+                            MemoryLimit = memoryLimit,
+                            ReportFile = reportFile,
                             CurrentDirectory = Environment.CurrentDirectory
                         };
 
@@ -138,19 +132,27 @@ namespace OITool.CLI
                             throw new Exception("Failed to get result data from server.");
                         else if (!resultData.Result.HasValue)
                         {
-                            new ColorString(("red", $"Error: "), ("gray", resultData.ExtraInformation ?? "Unkown Error")).Output(true);
+                            new ColorString(("red", $"Error: "), ("", resultData.ExtraInformation ?? "Unkown Error")).Output(true);
                         }
                         else
                         {
+                            // Try to output console information from plugins.
+                            if (resultData.ConsoleInformation is var infoLines && infoLines != null)
+                            {
+                                foreach (var line in infoLines)
+                                    if (line.ColoredText != null)
+                                        new ColorString(line.Separator, line.ColoredText).Output(true);
+                            }
+
                             if (resultData.Result.Value is var resultValue && resultData.Result.Value.Judge.Count() > 0)
                             {
                                 var count = resultValue.Judge.Count();
                                 var passCount = resultValue.Judge.Where(point => point.Status == JudgerStatus.Accepted).Count();
 
                                 // Output Pass Rate (Bar)
-                                new ColorString(("gray", "Pass    ")).Output();
+                                new ColorString(("", "Pass    ")).Output();
                                 WriteRateBar((double)passCount / (double)count, 24, oppositeColor: true);
-                                new ColorString(("gray", $" ({passCount}/{count})")).Output(true);
+                                new ColorString(("", $" ({passCount}/{count})")).Output(true);
 
                                 // Calculate Average
                                 var avgTimeUsed = 0d;
@@ -164,20 +166,20 @@ namespace OITool.CLI
                                 avgMemoryUsed /= count;
 
                                 // Output Time Avg Used (Bar)
-                                new ColorString(("gray", "Time    ")).Output();
+                                new ColorString(("", "Time    ")).Output();
                                 WriteRateBar(avgTimeUsed / (double)resultValue.Judge[0].Timeout, 24);
-                                new ColorString(("gray", $" (avg {Math.Round(avgTimeUsed, 1)}ms)")).Output(true);
+                                new ColorString(("", $" (avg {Math.Round(avgTimeUsed, 1)}ms)")).Output(true);
 
                                 // Output Mmeory Avg Used (Bar)
-                                new ColorString(("gray", "Memory  ")).Output();
+                                new ColorString(("", "Memory  ")).Output();
                                 WriteRateBar(avgMemoryUsed / (double)resultValue.Judge[0].MemoryLimit, 24);
-                                new ColorString(("gray", $" (avg {Math.Round(avgMemoryUsed, 1)}MiB)")).Output(true);
+                                new ColorString(("", $" (avg {Math.Round(avgMemoryUsed, 1)}MiB)")).Output(true);
 
                                 // Points (List)
                                 var failedPoints = resultValue.Judge.Select((point, index) => (value: point, index: index + 1)).Where(point => point.value.Status != JudgerStatus.Accepted);
                                 if (failedPoints.Count() > 0)
                                 {
-                                    new ColorString(("gray", "Failures:")).Output(true);
+                                    new ColorString(("", "Failures:")).Output(true);
                                     foreach (var point in failedPoints)
                                     {
                                         new ColorString(("yellow", $"    #{point.index} | {point.value.Status} ")).Output();
@@ -195,23 +197,23 @@ namespace OITool.CLI
                                 // Report (list)
                                 if (resultValue.ReportFiles.Count() > 0)
                                 {
-                                    new ColorString(("gray", "View details in the reports:")).Output(true);
+                                    new ColorString(("", "View details in the reports:")).Output(true);
                                     foreach (var report in resultValue.ReportFiles)
                                         new ColorString(("cyan", $"    {report}")).Output(true);
                                 }
                             }
                             else
                             {
-                                new ColorString(("gray", "No File Judged.")).Output(true);
+                                new ColorString(("", "No File Judged.")).Output(true);
 
                                 // Check if no data-file exists.
-                                if (dataFiles.Where(file => File.Exists(file)).Count() == 0)
+                                if (dataFiles.Where(file => File.Exists(file) || Directory.Exists(file)).Count() == 0)
                                     new ColorString(("yellow", $"Warn: It seems none of data-file exist. Check the paths.")).Output(true);
 
                                 // Report (list)
                                 if (resultValue.ReportFiles.Count() > 0)
                                 {
-                                    new ColorString(("gray", "We still generate reports:")).Output(true);
+                                    new ColorString(("", "We still generate reports:")).Output(true);
                                     foreach (var report in resultValue.ReportFiles)
                                         new ColorString(("cyan", $"    {report}")).Output(true);
                                 }
@@ -225,11 +227,11 @@ namespace OITool.CLI
                 catch (TimeoutException)
                 {
                     new ColorString(("red", $"Failed to connect.")).Output(true);
-                    new ColorString(" ", ("gray", $"Type"), ("cyan", "oitool server start"), ("gray", "to launch server.")).Output(true);
+                    new ColorString(" ", ("", $"Type"), ("cyan", "oitool server start"), ("", "to launch server.")).Output(true);
                 }
                 catch (Exception ex)
                 {
-                    new ColorString(("red", $"Error: "), ("gray", ex.ToString())).Output(true);
+                    new ColorString(("red", $"Error: "), ("", ex.ToString())).Output(true);
                 }
             })
             .WithDescription("Try to judge your program by given data-file.");

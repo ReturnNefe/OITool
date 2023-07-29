@@ -1,0 +1,16 @@
+{
+    "cpp": {
+        "extension": [ "cpp", "cxx" ],
+        
+        // Available Variables
+        // ${file}                      The path of code file.
+        // ${file-without-extension}
+        // ${exec-extension}             The extension of executable file (.exe on Windows, none on other OS)
+        "build": {
+            "builder": "g++",
+            "args": "${file} -o ${file-without-extension}${exec-extension} -std=c++11",
+            "output": "${file-without-extension}${exec-extension}",
+            "timeout": 60000
+        }
+    }
+}

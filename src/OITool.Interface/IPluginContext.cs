@@ -1,13 +1,13 @@
 namespace OITool.Interface
 {
     /// <summary>
-    /// The context for plugins.
+    /// The context for <see cref="Interface.Worker"/>.
     /// </summary>
     public interface IPluginContext
     {
         /// <summary>
-        /// The judge context which you can register judgers.
+        /// The context which you can register judgers.
         /// </summary>
-        public Judge.IContext Judge { get; }
+        public Worker.Judge.IContext Judge { get; }
     }
 }
